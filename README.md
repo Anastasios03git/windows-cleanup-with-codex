@@ -1,12 +1,42 @@
 # Windows Cleanup with Codex
 
-Version: **0.2.0** — Windows Cleanup Agent launcher and bundled Codex skill.
+Version: **0.3.0** — Windows Cleanup Agent launcher and bundled Codex skill.
 
 A reusable Codex skill for inspecting disk usage and reclaiming space on Windows 10 and Windows 11. It discovers the computer's actual applications and paths, verifies cleanup candidates, and preserves useful data and system functionality.
 
 **Inspection without changes is the default.** A cleanup request enables only its stated scope. Driver updater uninstalls and obsolete driver removal each require explicit authorization.
 
-This is an instruction-based skill, not an executable cleaner or a double-click script. It uses the tools and permissions available in the local Codex environment. Administrator access may be needed for protected Windows operations; the skill does not change permission settings.
+The bundled skill supplies instructions to the Codex runtime. The CLI launcher and desktop preview below use those instructions and the permissions available in the local environment. Administrator access may be needed for protected Windows operations; the skill does not change permission settings.
+
+## Desktop app and setup guide
+
+**Every new ZIP you download may be blocked again by Windows.** Before extracting a trusted download: right-click **the ZIP file > Properties > Unblock > Apply**, if Unblock is shown. Repeat for each new download.
+
+**Downloaded ZIP blocked by Windows?** This unsigned release may need **Properties > Unblock > Apply on the trusted ZIP before extraction**. Extract it again into a new folder if it was already extracted while blocked. See [START-HERE.md](START-HERE.md). Startup errors now stay visible in the CMD window; the launcher does not bypass Windows security or change persistent execution policy.
+
+Download **Windows-Cleanup-v0.3.0.zip** from the release assets and extract the whole ZIP into a writable folder. Double-click **Open-WindowsCleanup.cmd**, or run it from CMD. Keep all files together. If Windows marks the downloaded ZIP as blocked, use its Properties > Unblock before extraction only after reviewing and trusting the download. Do not disable system execution policy.
+
+The initial setup guide runs on built-in Windows PowerShell 5.1. It checks PowerShell 7, locates Codex CLI, and checks `codex login status` without blocking the window. **Install guide** opens official Microsoft/OpenAI instructions; installation remains your choice. **Sign in** starts Codex's normal browser login. **Check again** repeats discovery, including after an installation; **Open app** is enabled when all three requirements are ready. Setup starts no inspection or cleanup and changes no persistent execution policy.
+
+The runtime ZIP excludes tests, historical examples, private run reports, and Git metadata; those remain in the source repository. The original Codex CLI entry point and skill remain available. The app requires PowerShell 7 and an authenticated Codex CLI; it discovers PowerShell 7 on PATH, in its standard installation directory, or in the Codex desktop runtime. It discovers Codex on PATH or in the desktop app's versioned `OpenAI/Codex/bin` directories, so a desktop update does not require editing a command.
+
+The English interface offers a new read-only inspection, optional administrator-approved diagnostics, local run history, and plain-text inspection/cleanup reports. Progress includes elapsed time and the last agent-log update rather than an invented percentage. A running inspection prevents duplicate launches and accidental window closure.
+
+Read the inspection report, check its review box, and type **CLEAN** in the app before choosing **Continue to Clean**. Clean runs inside the same window through [Codex App Server](https://learn.chatgpt.com/docs/app-server), with live messages, command/file permission requests, **Approve this request / Reject**, and answers to agent questions. Approvals apply only to the displayed request; filesystem/network grants last only for that turn. Confirmation-only MCP tool requests, including Computer Use access to Windows Disk Cleanup, also appear in Approve / Reject. Approving does not save a permanent or session-wide tool grant. MCP forms requiring extra fields and URL flows are not supported; they and unknown requests are rejected without approval. Windows UAC may still appear separately for administrator actions.
+
+The existing launcher still validates plan hashes, age, skill digest, computer/user, and replay state before starting. Read the final cleanup report for actual removals, skips, and errors; a completed agent turn does not prove that any data was removed. The CLI mode remains available for terminal users.
+
+**Stop Clean** requests an interruption through Codex App Server and keeps the logs. It rejects pending/new approvals and does not undo completed actions. The client waits for recognized active Windows servicing commands to finish before interrupting. Inspect has no Stop control. Repeated `Split-Path` errors automatically request the same guarded interruption. Path checks use a fixed read-only helper with terminating errors, a visited-path check, and a maximum of 128 ancestor steps; unresolved targets are retained. After an interruption or this skill update, start a fresh inspection rather than replaying the old plan.
+
+Reports and app logs remain local under ignored `runs/`. No inspection or cleanup starts just by opening the app. This is a portable desktop preview, not a standalone installer; Codex CLI and PowerShell 7 are still required. Validation evidence and remaining limits are recorded in VALIDATION.md.
+
+To launch from PowerShell 7 directly:
+
+```powershell
+pwsh -STA -File .\Start-WindowsCleanupApp.ps1
+```
+
+An explicit `-CodexPath 'C:\path\to\codex.exe'` overrides discovery when needed. The double-click launcher applies RemoteSigned only to its processes; it does not persistently change execution policy. Downloaded files may require the normal Windows trust/unblock process before RemoteSigned permits them to run.
 
 ## Run the Windows Cleanup Agent
 

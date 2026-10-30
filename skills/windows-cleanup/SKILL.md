@@ -2,7 +2,7 @@
 name: windows-cleanup
 description: Inspect Windows disk usage and reclaim space from verified disposable caches, completed installers, and superseded components. Use for Windows disk cleanup requests, including explicitly requested driver cleanup; not for generic performance tuning or non-Windows systems.
 metadata:
-  version: "0.2.0"
+  version: "0.3.0"
 ---
 
 # Windows Cleanup
@@ -33,6 +33,7 @@ In inspection mode, finish with findings and proposed actions. Do not run a clea
 Apply the detailed procedure in the relevant reference before each category of cleanup. Verify command support on the target Windows version and consult the linked Microsoft or application documentation when needed.
 
 - Resolve each exact target and check for junctions, symlinks, and reparse points leading elsewhere before recursive deletion. Keep enumeration and deletion in one shell, using literal paths.
+- Use terminating errors and bounded traversal with a progress check for filesystem loops. For parent traversal use `System.IO.Directory.GetParent`; do not combine `Split-Path -LiteralPath` with `-Parent`. Stop on an error or unchanged parent instead of repeating it indefinitely.
 - Skip active downloads, updates, installers, builds, open files, and unresolved targets. Do not terminate the user's applications to reclaim cache space.
 - Keep personal files, source projects, AI models, application settings, browser sessions/site storage, recovery data, restore points, and virtual environments unless the user separately requests a specific operation on them.
 - Never blanket-empty Temp or Downloads. Do not delete Driver Store, WinSxS, Windows Installer, or shared package-cache files manually; use the documented supported mechanism for the specific authorized operation.
