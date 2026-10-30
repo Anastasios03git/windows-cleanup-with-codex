@@ -1,0 +1,4 @@
+interface:
+  display_name: "Windows Cleanup"
+  short_description: "Inspect disk usage and clean verified Windows clutter"
+  default_prompt: "Use $windows-cleanup to inspect my Windows disk usage and report cleanup candidates without making changes."
